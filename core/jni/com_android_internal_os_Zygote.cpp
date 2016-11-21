@@ -465,18 +465,6 @@ static pid_t ForkAndSpecializeCommon(JNIEnv* env, uid_t uid, gid_t gid, jintArra
   SetForkLoad(true);
 #endif
 
-  // If this is the first fork for this zygote, create the open FD table.
-  // If it isn't, we just need to check whether the list of open files has
-  // changed (and it shouldn't in the normal case).
-  if (gOpenFdTable == NULL) {
-    gOpenFdTable = FileDescriptorTable::Create();
-    if (gOpenFdTable == NULL) {
-      RuntimeAbort(env, __LINE__, "Unable to construct file descriptor table.");
-    }
-  } else if (!gOpenFdTable->Restat()) {
-    RuntimeAbort(env, __LINE__, "Unable to restat file descriptor table.");
-  }
-
   pid_t pid = fork();
 
   if (pid == 0) {
